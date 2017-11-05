@@ -220,11 +220,11 @@ void generate_truthtable(var_t *varr, cstack_t *cs) {
 
     printf("%*s", 5 + maxlenght, "Result");
 
-    for(int i = 0; i < (1 << (nelem - 1)); ++i) {
+    for(int i = 0; i < (1 << (nelem - 2)); ++i) {
         printf("\n%4d:", i + 1);
 
         for(int j = nelem - 1; j > 1 ; --j) {
-            SET_NTH_BIT(varr->var[j].bit, i, (j - 1));
+            SET_NTH_BIT(varr->var[j].bit, i, (j - 2));
 
             printf("%*d", maxlenght, varr->var[j].bit);
         }
