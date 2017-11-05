@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-#define TOKEN_MAX_LENGHT        (0xF)
+#define TOKEN_MAX_LENGHT        (0xFF)
 #define EXPRESSION_MAX_LENGHT   (0xFF)
 #define STACK_SIZE              (0xFF)
 #define N_KEYWORDS              (4)
@@ -92,8 +92,11 @@ int correct_varname(const char *str) {
 
 int already_exist(var_t *varr, const char *var) {
     for(uint32_t i = 0; i < varr->size; ++i) {
-        if(strcmp(varr->var[i].name, var) == 0)
+        if(strcmp(varr->var[i].name, var) == 0) {
+            if(i == 0 || i == 1)
+                return 2;    
             return 1;
+        }
     }
 
     return 0;
@@ -102,10 +105,10 @@ int already_exist(var_t *varr, const char *var) {
 int parse_string(cstack_t *cs, var_t *varr, char *str) {
     operator_t   op = VAR;
 
+    int         tok_false_true = 2;
+
     char        *pch;
     char        *del = " ";
-
-    size_t      total_one_op_lenght = 0u;
 
     pch = strtok(str, del);
 
@@ -121,16 +124,18 @@ int parse_string(cstack_t *cs, var_t *varr, char *str) {
 
         if(op == VAR) {
             if(correct_varname(pch)) {
-                if(!already_exist(varr, pch)) {
+                int ret = already_exist(varr, pch); 
+                
+                if(ret == 0) {
                     var_add(varr, 0, pch);
+                }
+                else if(ret == 2) {
+                    tok_false_true--;
                 }
             }
             else {
                 return 0;
             }
-        }
-        else if (op == KEYWORD_ONE_OPE) {
-            total_one_op_lenght++;
         }
 
         cadd_token(cs, pch, op);
@@ -139,7 +144,7 @@ int parse_string(cstack_t *cs, var_t *varr, char *str) {
         pch = strtok(NULL, del);
     }
     
-    if((cs->size_token - (varr->size - 2) - total_one_op_lenght) >= (varr->size - 2)) {
+    if(cs->size_op >= (varr->size - tok_false_true)) {
         return 0;
     }
 
@@ -218,7 +223,7 @@ void generate_truthtable(var_t *varr, cstack_t *cs) {
         printf("%*s", maxlenght, varr->var[j].name);
     }
 
-    printf("%*s", 5 + maxlenght, "Result");
+    printf("%*s", 7 + maxlenght, "Resultat");
 
     for(int i = 0; i < (1 << (nelem - 2)); ++i) {
         printf("\n%4d:", i + 1);
