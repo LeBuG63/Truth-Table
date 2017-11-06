@@ -10,7 +10,7 @@
 #define TOKEN_MAX_LENGHT        (0xFF)
 #define EXPRESSION_MAX_LENGHT   (0xFF)
 #define STACK_SIZE              (0xFF)
-#define N_KEYWORDS              (4)
+#define N_KEYWORDS              (5)
 
 #define SET_NTH_BIT(b, i, j)    (b = (i & (1 << j)) >> j)
 
@@ -21,17 +21,25 @@ typedef enum {
     KEYWORD_TWO_OPE
 } operator_t;
 
+bool builtin_and(bool a, bool b);
+bool builtin_or(bool a, bool b);
+bool builtin_xor(bool a, bool b);
+bool builtin_not(bool a, bool b);
+bool builtin_eq(bool a, bool b);
+
 typedef struct {
     char        name[16];
     char        shortcut[8];
     operator_t  op;
+    bool        (*builtin_op)(bool, bool);
 } keyword_t;
 
 static keyword_t _keyword[N_KEYWORDS] = {
-   { "and", "&&", KEYWORD_TWO_OPE},
-   { "or", "||", KEYWORD_TWO_OPE},
-   { "xor", "^", KEYWORD_TWO_OPE},
-   { "not", "!", KEYWORD_ONE_OPE}
+    { "and", "&&",  KEYWORD_TWO_OPE,  builtin_and},
+    { "or",  "||",  KEYWORD_TWO_OPE,  builtin_or},
+    { "xor", "^",   KEYWORD_TWO_OPE,  builtin_xor},
+    { "not", "!",   KEYWORD_ONE_OPE,  builtin_not},
+    { "eq",  "=",   KEYWORD_TWO_OPE,  builtin_eq}
 };
 
 typedef struct {
@@ -130,7 +138,9 @@ int parse_string(cstack_t *cs, var_t *varr, char *str) {
                     var_add(varr, 0, pch);
                 }
                 else if(ret == 2) {
-                    tok_false_true--;
+                    if(--tok_false_true) {
+                        tok_false_true = 0;
+                    }
                 }
             }
             else {
@@ -159,11 +169,15 @@ bitvar_t *bitvar_get_from_name(var_t *varr, const char *name) {
     return NULL;
 }
 
+
+
 bool evaluate(const char *name, bool a, bool b) {
-    if(strcmp(name, "and") == 0 || strcmp(name, "&&") == 0)    return a && b;
-    if(strcmp(name, "or") == 0 || strcmp(name, "||") == 0)     return a || b;
-    if(strcmp(name, "xor") == 0 || strcmp(name, "^") == 0)    return a ^ b;
-    if(strcmp(name, "not") == 0|| strcmp(name, "!") == 0)    return !a;
+    for(int i = 0; i < N_KEYWORDS; ++i) {
+        if(strcmp(name, _keyword[i].name) == 0
+        || strcmp(name, _keyword[i].shortcut) == 0) {
+            return (*_keyword[i].builtin_op)(a, b);
+        }
+    }
 
     return 0;
 }
@@ -288,4 +302,26 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
+}
+
+bool builtin_and(bool a, bool b) {
+    return a && b;
+}
+
+bool builtin_or(bool a, bool b) {
+    return a || b;
+}
+
+bool builtin_xor(bool a, bool b) {
+    return a ^ b;
+}
+
+bool builtin_not(bool a, bool b) {
+    (void)b;
+    
+    return !a;
+}
+
+bool builtin_eq(bool a, bool b){
+    return a == b;
 }
