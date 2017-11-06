@@ -40,6 +40,7 @@ Le programme va ensuite sortir la table de vérité corespondante, avec les noms
   * or (||)
   * xor (^)
   * not (!)
+  * eq (=)
 
 ### Constantes
   * true
