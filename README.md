@@ -7,7 +7,7 @@ L'utilisation se fait via la ligne de commande: `./ttable "expression"`
 L'expression doit être une expression ecrite via la notation polonaise inverse comme suit:
   - `"<variable_1> [variable_2] <opérateur logique>"`
 La répétition de ce processus permet de former une expression logique.
-Le programme va ensuite sortir la table de veritée corespondante, avec les noms des variables transmises.
+Le programme va ensuite sortir la table de vérité corespondante, avec les noms des variables transmises.
 
 ## Exemples d'utilisation:
 
