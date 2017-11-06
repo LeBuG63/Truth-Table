@@ -1,5 +1,5 @@
 # Truth-Table
-Générateur de table de vieritée avec la notation polonaise inverse.
+Générateur de table de vérite avec la notation polonaise inverse.
 
 ## Utilisation
 L'utilisation se fait via la ligne de commande: `./ttable "expression"`
