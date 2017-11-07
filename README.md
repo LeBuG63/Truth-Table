@@ -1,6 +1,9 @@
 # Truth-Table
 Générateur de table de vérite avec la notation polonaise inverse.
 
+## Compilation:
+`gcc truthtable.c -Wall -Wextra -std=c11 -lm -o ttable`
+
 ## Utilisation
 L'utilisation se fait via la ligne de commande: `./ttable "expression"`
 
