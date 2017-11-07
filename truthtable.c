@@ -10,7 +10,7 @@
 #define TOKEN_MAX_LENGHT        (0xFF)
 #define EXPRESSION_MAX_LENGHT   (0xFF)
 #define STACK_SIZE              (0xFF)
-#define N_KEYWORDS              (5)
+#define N_KEYWORDS              (7)
 
 #define SET_NTH_BIT(b, i, j)    (b = (i & (1 << j)) >> j)
 
@@ -26,6 +26,8 @@ bool builtin_or(bool a, bool b);
 bool builtin_xor(bool a, bool b);
 bool builtin_not(bool a, bool b);
 bool builtin_eq(bool a, bool b);
+bool builtin_nor(bool a, bool b);
+bool builtin_nand(bool a, bool b);
 
 typedef struct {
     char        name[16];
@@ -35,11 +37,13 @@ typedef struct {
 } keyword_t;
 
 static keyword_t _keyword[N_KEYWORDS] = {
-    { "and", "&&",  KEYWORD_TWO_OPE,  builtin_and},
-    { "or",  "||",  KEYWORD_TWO_OPE,  builtin_or},
-    { "xor", "^",   KEYWORD_TWO_OPE,  builtin_xor},
-    { "not", "!",   KEYWORD_ONE_OPE,  builtin_not},
-    { "eq",  "=",   KEYWORD_TWO_OPE,  builtin_eq}
+    { "and", "&&",      KEYWORD_TWO_OPE,  builtin_and},
+    { "or",  "||",      KEYWORD_TWO_OPE,  builtin_or},
+    { "xor", "^",       KEYWORD_TWO_OPE,  builtin_xor},
+    { "not", "!",       KEYWORD_ONE_OPE,  builtin_not},
+    { "eq",  "=",       KEYWORD_TWO_OPE,  builtin_eq},
+    { "nand", "",    KEYWORD_TWO_OPE,  builtin_nand},
+    { "nor", "",     KEYWORD_TWO_OPE,  builtin_nor}
 };
 
 typedef struct {
@@ -240,7 +244,7 @@ void generate_truthtable(var_t *varr, cstack_t *cs) {
     printf("%*s", 7 + maxlenght, "Resultat");
 
     for(int i = 0; i < (1 << (nelem - 2)); ++i) {
-        printf("\n%4d:", i + 1);
+        printf("\n%4d:", i);
 
         for(int j = nelem - 1; j > 1 ; --j) {
             SET_NTH_BIT(varr->var[j].bit, i, (j - 2));
@@ -324,4 +328,12 @@ bool builtin_not(bool a, bool b) {
 
 bool builtin_eq(bool a, bool b){
     return a == b;
+}
+
+bool builtin_nor(bool a, bool b) {
+    return !(a || b);
+}
+
+bool builtin_nand(bool a, bool b) {
+    return !(a && b);
 }
