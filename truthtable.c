@@ -128,7 +128,8 @@ int parse_string(cstack_t *cs, var_t *varr, char *str) {
         for(int i = 0; i < N_KEYWORDS ; ++i) {
             if(strcmp(pch, _keyword[i].name) == 0 
             || strcmp(pch, _keyword[i].shortcut) == 0) {
-                cs->size_op++;
+                if(_keyword[i].op != KEYWORD_ONE_OPE)
+                    cs->size_op++;
                 op = _keyword[i].op;
                 break;
             }
