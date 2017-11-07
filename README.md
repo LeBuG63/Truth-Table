@@ -41,6 +41,8 @@ Le programme va ensuite sortir la table de vérité corespondante, avec les noms
   * xor (^)
   * not (!)
   * eq (=)
+  * nand
+  * nor
 
 ### Constantes
   * true
